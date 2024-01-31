@@ -1,22 +1,30 @@
+'use client';
+
+import { onFollow } from '@/actions/follow'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { UserButton } from '@clerk/nextjs'
+import { useTransition } from 'react';
+import { toast } from 'sonner';
 
 export default function Home() {
-  return (
-    <>
-      <div className='text-red-600'>
-        Only authenticated users can see this
-        <Input />
-        <Button variant='destructive' size='icon'>
-          Hii
-        </Button>
-        <UserButton afterSignOutUrl='/' />
+  const [isPending, startTransition] = useTransition();
 
-        <div className='text-blue-700'>
-          <Input />
-        </div>
-        </div>
-      </>
-      )
+  const onClick = () => {
+    startTransition(() => {
+      onFollow('123', 'my name is victory')
+        .then(() => toast.error("Followed the user", {
+          unstyled: true,
+          className: 'gap-x-2 flex items-center text-green-500 bg-red-400 p-4 rounded-md'
+        }));
+    })
+  }
+
+  return (
+    <Button
+      className='text-green-500 bg-red-400 align-middle items-center'
+    disabled={isPending} onClick={onClick}>
+      Click me
+    </Button>
+  )
 }

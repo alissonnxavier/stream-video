@@ -81,3 +81,8 @@ model Block {
   @@index([blockerId])
   @@index([blockedId])
 }
+
+model Test {
+  id String @id @default(uuid())
+  name String
+}
