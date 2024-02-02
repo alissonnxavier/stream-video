@@ -1,16 +1,40 @@
 "use server";
 
-import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
-export const onFollow = async (id: string, name: string) => {
+import {
+    followUser,
+    unfollowUser
+} from "@/lib/follow-service";
+
+export const onFollow = async (id: string) => {
     try {
-        await db.test.create({
-            data: {
-                name,
-            }
-        })
-        console.log("I am the same as an API Call", id);
-    } catch (erro) {
+        const followedUser = await followUser(id);
+
+        revalidatePath("/");
+
+        if (followedUser) {
+            revalidatePath(`/${followedUser.following.username}`);
+        }
+
+        return followedUser;
+    } catch (error) {
+        throw new Error("Interal Error");
+    };
+};
+
+export const onUnfollow = async (id: string) => {
+    try {
+        const unfollowedUser = await unfollowUser(id);
+
+        revalidatePath("/");
+
+        if (unfollowedUser) {
+            revalidatePath(`/${unfollowedUser.following.username}`)
+        }
+
+        return unfollowedUser;
+    } catch (error) {
         throw new Error("Internal Error");
     }
 }
