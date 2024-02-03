@@ -1,30 +1,13 @@
-'use client';
+import { Suspense } from "react";
 
-import { onFollow } from '@/actions/follow'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { UserButton } from '@clerk/nextjs'
-import { useTransition } from 'react';
-import { toast } from 'sonner';
+import { Results, ResultsSkeleton } from "./_components/results";
 
-export default function Home() {
-  const [isPending, startTransition] = useTransition();
-
-  const onClick = () => {
-    startTransition(() => {
-      onFollow('123', 'my name is victory')
-        .then(() => toast.error("Followed the user", {
-          unstyled: true,
-          className: 'gap-x-2 flex items-center text-green-500 bg-red-400 p-4 rounded-md'
-        }));
-    })
-  }
-
+export default function Page() {
   return (
-    <Button
-      className='text-green-500 bg-red-400 align-middle items-center'
-    disabled={isPending} onClick={onClick}>
-      Click me
-    </Button>
-  )
-}
+    <div className="h-full p-8 max-w-screen-2xl mx-auto">
+      <Suspense fallback={<ResultsSkeleton />}>
+        <Results />
+      </Suspense>
+    </div>
+  );
+};
